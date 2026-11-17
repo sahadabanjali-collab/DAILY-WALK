@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useToast } from '../../context/ToastContext';
+import { useStoreData } from '../../context/StoreDataContext';
 import { ShieldCheck, Truck, ArrowRight, Tag, CheckCircle2 } from 'lucide-react';
 
 interface OrderSummaryProps {
@@ -21,24 +22,27 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
     finalTotal,
   } = useCart();
 
+  const { validateCoupon, coupons } = useStoreData();
   const [couponCode, setCouponCode] = useState('');
-  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; percent: number } | null>(null);
+  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount: number } | null>(null);
   const { showToast } = useToast();
   const navigate = useNavigate();
 
   const handleApplyCoupon = (e: React.FormEvent) => {
     e.preventDefault();
-    const clean = couponCode.trim().toUpperCase();
-    if (clean === 'DAILYWALK10' || clean === 'WELCOME10') {
-      setAppliedCoupon({ code: clean, percent: 10 });
-      showToast('Coupon Applied!', '10% discount added to your order summary');
+    if (!couponCode.trim()) return;
+
+    const res = validateCoupon(couponCode, subtotal);
+    if (res.valid) {
+      setAppliedCoupon({ code: couponCode.trim().toUpperCase(), discount: res.discount });
+      showToast('Coupon Applied!', res.message, 'success');
       setCouponCode('');
     } else {
-      showToast('Invalid Coupon Code', 'Try DAILYWALK10 or WELCOME10 for 10% off', 'warning');
+      showToast('Invalid Coupon', res.message, 'warning');
     }
   };
 
-  const couponDiscount = appliedCoupon ? Math.round((subtotal * appliedCoupon.percent) / 100) : 0;
+  const couponDiscount = appliedCoupon ? appliedCoupon.discount : 0;
   const grandTotal = Math.max(0, finalTotal - couponDiscount);
 
   const neededForFreeShipping = Math.max(0, freeShippingThreshold - subtotal);

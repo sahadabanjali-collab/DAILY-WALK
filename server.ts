@@ -1,14 +1,28 @@
 import express from 'express';
 import path from 'path';
+import fs from 'fs';
 import crypto from 'crypto';
 import Razorpay from 'razorpay';
 import { createServer as createViteServer } from 'vite';
+
+// Process-level resilience against crashes
+process.on('uncaughtException', (err) => {
+  console.error('[Server uncaughtException]', err);
+});
+process.on('unhandledRejection', (reason) => {
+  console.error('[Server unhandledRejection]', reason);
+});
 
 async function startServer() {
   const app = express();
   const PORT = 3000;
 
   app.use(express.json());
+
+  // Health check endpoints for Cloud Run / proxy ingress
+  app.get(['/health', '/_health', '/api/health'], (_req, res) => {
+    res.status(200).json({ status: 'healthy', timestamp: new Date().toISOString() });
+  });
 
   // Helper for Razorpay client instance
   const getRazorpayInstance = () => {
@@ -97,16 +111,37 @@ async function startServer() {
       appType: 'spa',
     });
     app.use(vite.middlewares);
+
+    // SPA fallback in development if a direct HTML route is requested
+    app.use('*', async (req, res, next) => {
+      const url = req.originalUrl;
+      if (url.startsWith('/api')) {
+        return next();
+      }
+      try {
+        const indexPath = path.resolve(process.cwd(), 'index.html');
+        if (fs.existsSync(indexPath)) {
+          let template = fs.readFileSync(indexPath, 'utf-8');
+          template = await vite.transformIndexHtml(url, template);
+          res.status(200).set({ 'Content-Type': 'text/html' }).end(template);
+        } else {
+          next();
+        }
+      } catch (e: any) {
+        vite.ssrFixStacktrace(e);
+        next(e);
+      }
+    });
   } else {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
-    app.get('*', (req, res) => {
+    app.get('*', (_req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }
 
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on http://0.0.0.0:${PORT}`);
+    console.log(`Daily Walk server successfully running on http://0.0.0.0:${PORT}`);
   });
 }
 

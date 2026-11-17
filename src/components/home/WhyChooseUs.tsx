@@ -1,53 +1,47 @@
 import React from 'react';
-import { Truck, RotateCcw, ShieldCheck, Footprints } from 'lucide-react';
+import { Truck, RotateCcw, ShieldCheck, CreditCard } from 'lucide-react';
 
 export const WhyChooseUs: React.FC = () => {
-  const features = [
+  const items = [
     {
-      icon: <Truck className="w-7 h-7 text-[#E53935]" />,
+      icon: <Truck className="w-8 h-8 text-neutral-800 stroke-[1.5]" />,
       title: 'Free Shipping',
-      description: 'Free delivery on eligible orders above ₹1,999 across all pincodes.',
+      subtitle: 'On orders over ₹1,999',
     },
     {
-      icon: <RotateCcw className="w-7 h-7 text-[#E53935]" />,
-      title: 'Easy Returns',
-      description: 'Simple, hassle-free 15-day door-step return & exchange policy.',
+      icon: <RotateCcw className="w-8 h-8 text-neutral-800 stroke-[1.5]" />,
+      title: '30-Day Returns',
+      subtitle: 'Hassle-free returns',
     },
     {
-      icon: <ShieldCheck className="w-7 h-7 text-[#E53935]" />,
-      title: 'Secure Shopping',
-      description: '100% safe and encrypted payment gateway experience.',
+      icon: <ShieldCheck className="w-8 h-8 text-neutral-800 stroke-[1.5]" />,
+      title: '100% Authentic',
+      subtitle: 'Genuine branded products',
     },
     {
-      icon: <Footprints className="w-7 h-7 text-[#E53935]" />,
-      title: 'Quality Footwear',
-      description: 'Comfortable, durable styles engineered for real everyday life.',
+      icon: <CreditCard className="w-8 h-8 text-neutral-800 stroke-[1.5]" />,
+      title: 'Secure Payments',
+      subtitle: 'Safe & encrypted checkout',
     },
   ];
 
   return (
-    <section className="py-16 bg-[#F7F7F7] border-y border-[#E5E5E5]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <h2 className="text-2xl sm:text-4xl font-black text-[#111111] tracking-tight">
-            Why Choose Daily Walk
-          </h2>
-          <p className="text-sm sm:text-base text-[#777777] font-medium mt-1">
-            We are committed to giving you the best online shoe shopping experience.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {features.map((feat, idx) => (
-            <div
-              key={idx}
-              className="bg-white p-6 rounded-2xl border border-[#E5E5E5] hover:border-gray-400 hover:shadow-lg transition-all duration-300 text-center flex flex-col items-center"
-            >
-              <div className="w-14 h-14 bg-[#F7F7F7] rounded-2xl flex items-center justify-center mb-4 border border-[#E5E5E5]">
-                {feat.icon}
+    <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 border-t border-gray-100">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {items.map((item, idx) => (
+            <div key={idx} className="flex items-center gap-4">
+              <div className="p-3 bg-[#F6F6F6] rounded-2xl flex-shrink-0">
+                {item.icon}
               </div>
-              <h3 className="text-base font-extrabold text-[#111111] mb-2">{feat.title}</h3>
-              <p className="text-xs text-[#777777] leading-relaxed">{feat.description}</p>
+              <div>
+                <h4 className="font-heading font-bold text-sm sm:text-base text-[#111111]">
+                  {item.title}
+                </h4>
+                <p className="text-xs text-[#777777] font-normal mt-0.5">
+                  {item.subtitle}
+                </p>
+              </div>
             </div>
           ))}
         </div>

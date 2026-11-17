@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { MOCK_PRODUCTS } from '../data/products';
+import { useStoreData } from '../context/StoreDataContext';
 import { FilterState, SortOption, CategorySlug, Gender, Brand } from '../types';
 import { ProductGrid } from '../components/product/ProductGrid';
 import { ProductFilters } from '../components/product/ProductFilters';
@@ -20,6 +20,7 @@ const INITIAL_FILTERS: FilterState = {
 };
 
 export const Shop: React.FC = () => {
+  const { products } = useStoreData();
   const [searchParams, setSearchParams] = useSearchParams();
   const [filters, setFilters] = useState<FilterState>(INITIAL_FILTERS);
   const [sortOption, setSortOption] = useState<SortOption>('featured');
@@ -51,7 +52,7 @@ export const Shop: React.FC = () => {
 
   // Filter & Sort Logic
   const filteredProducts = useMemo(() => {
-    let result = [...MOCK_PRODUCTS];
+    let result = [...products];
 
     // Search query
     if (filters.searchQuery.trim()) {
@@ -129,7 +130,7 @@ export const Shop: React.FC = () => {
     }
 
     return result;
-  }, [filters, sortOption]);
+  }, [filters, sortOption, products]);
 
   const handleClearAll = () => {
     setFilters(INITIAL_FILTERS);
@@ -168,7 +169,7 @@ export const Shop: React.FC = () => {
                 All Footwear Collection
               </h1>
               <p className="text-xs sm:text-sm text-[#777777] font-medium mt-0.5">
-                Showing {filteredProducts.length} of {MOCK_PRODUCTS.length} premium shoes
+                Showing {filteredProducts.length} of {products.length} premium shoes
               </p>
             </div>
 

@@ -73,6 +73,13 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
                 src={img}
                 alt={`${productName} thumbnail ${idx + 1}`}
                 className="max-h-full max-w-full object-contain mix-blend-multiply"
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  if (!target.dataset.failed) {
+                    target.dataset.failed = 'true';
+                    target.src = 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=75';
+                  }
+                }}
               />
             </button>
           ))}

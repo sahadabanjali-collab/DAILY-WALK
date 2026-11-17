@@ -1,72 +1,77 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { CATEGORIES } from '../../data/categories';
-import { ArrowRight } from 'lucide-react';
 
 export const ShopByCategory: React.FC = () => {
-  return (
-    <section className="py-16 bg-white border-b border-[#E5E5E5]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
-          <div>
-            <h2 className="text-2xl sm:text-4xl font-black text-[#111111] tracking-tight">
-              Shop by Category
-            </h2>
-            <p className="text-sm sm:text-base text-[#777777] font-medium mt-1">
-              Find the perfect pair for every occasion.
-            </p>
-          </div>
+  const categories = [
+    {
+      name: 'Running',
+      slug: 'sports',
+      image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=400&q=80',
+    },
+    {
+      name: 'Lifestyle',
+      slug: 'casual',
+      image: 'https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?auto=format&fit=crop&w=400&q=80',
+    },
+    {
+      name: 'Basketball',
+      slug: 'sneakers',
+      image: 'https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=400&q=80',
+    },
+    {
+      name: 'Training',
+      slug: 'sports',
+      image: 'https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=400&q=80',
+    },
+    {
+      name: 'Sneakers',
+      slug: 'sneakers',
+      image: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=400&q=80',
+    },
+    {
+      name: 'Slides',
+      slug: 'casual',
+      image: 'https://images.unsplash.com/photo-1603808033192-082d6919d3e1?auto=format&fit=crop&w=400&q=80',
+    },
+    {
+      name: 'Boots',
+      slug: 'formal',
+      image: 'https://images.unsplash.com/photo-1520639888713-7851133b1ed0?auto=format&fit=crop&w=400&q=80',
+    },
+  ];
 
-          <Link
-            to="/shop"
-            className="inline-flex items-center gap-1.5 text-sm font-extrabold text-[#111111] hover:text-[#E53935] transition-colors group"
-          >
-            <span>View All Categories</span>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </Link>
+  return (
+    <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 border-b border-gray-100">
+      <div className="max-w-7xl mx-auto">
+        {/* Section Title matching reference */}
+        <div className="mb-6 sm:mb-8">
+          <h2 className="font-heading font-black text-xs sm:text-sm tracking-wider uppercase text-[#111111]">
+            SHOP BY CATEGORY
+          </h2>
         </div>
 
-        {/* Category Cards Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-          {CATEGORIES.map((cat) => (
+        {/* 7-column category cards matching reference */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-3 sm:gap-4">
+          {categories.map((cat) => (
             <Link
-              key={cat.slug}
+              key={cat.name}
               to={`/shop?category=${cat.slug}`}
-              className="group relative bg-[#F7F7F7] rounded-2xl overflow-hidden border border-[#E5E5E5] hover:border-gray-400 hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
+              className="group flex flex-col items-center text-center select-none"
             >
-              {/* Category Image */}
-              <div className="relative aspect-[4/3] w-full overflow-hidden bg-gray-200">
+              {/* Soft #F6F6F6 rounded card container */}
+              <div className="w-full h-28 sm:h-32 bg-[#F6F6F6] group-hover:bg-[#EFEFEF] rounded-2xl flex items-center justify-center p-3 transition-all duration-200 group-hover:-translate-y-1">
                 <img
                   src={cat.image}
                   alt={cat.name}
-                  className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500"
+                  className="max-h-full max-w-full object-contain mix-blend-multiply group-hover:scale-108 transition-transform duration-300 drop-shadow-xs"
                   loading="lazy"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-
-                {cat.badge && (
-                  <span className="absolute top-3 left-3 bg-[#E53935] text-white text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-md shadow-xs">
-                    {cat.badge}
-                  </span>
-                )}
               </div>
 
-              {/* Text Info */}
-              <div className="p-4 bg-white flex items-center justify-between gap-2 border-t border-[#E5E5E5]">
-                <div>
-                  <h3 className="text-base font-extrabold text-[#111111] group-hover:text-[#E53935] transition-colors">
-                    {cat.name}
-                  </h3>
-                  <p className="text-xs text-[#777777] line-clamp-1 mt-0.5">
-                    {cat.description}
-                  </p>
-                </div>
-
-                <div className="w-8 h-8 rounded-full bg-[#F7F7F7] group-hover:bg-[#111111] group-hover:text-white flex items-center justify-center text-[#111111] transition-colors flex-shrink-0">
-                  <ArrowRight className="w-4 h-4" />
-                </div>
-              </div>
+              {/* Bold Category Label below card */}
+              <span className="font-heading font-bold text-xs sm:text-sm text-[#111111] mt-2.5 group-hover:text-black transition-colors">
+                {cat.name}
+              </span>
             </Link>
           ))}
         </div>

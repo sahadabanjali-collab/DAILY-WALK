@@ -1,25 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
+import { useAuth } from '../context/AuthContext';
+import { useStoreData } from '../context/StoreDataContext';
 import { OrderSummary } from '../components/cart/OrderSummary';
-import { ShieldCheck, Truck, CreditCard, ArrowLeft, CheckCircle2, Lock, Smartphone, Building2, Zap } from 'lucide-react';
+import { ShieldCheck, Truck, CreditCard, ArrowLeft, CheckCircle2, Lock, Smartphone, Building2, Zap, UserCheck, LogIn } from 'lucide-react';
 import { createSupabaseOrder } from '../lib/supabase';
 import { openRazorpayCheckout } from '../lib/razorpay';
 
 export const CheckoutPage: React.FC = () => {
   const { cart, clearCart, finalTotal, subtotal } = useCart();
   const { showToast } = useToast();
+  const { user } = useAuth();
+  const { recordNewOrder } = useStoreData();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-    address: '',
-    city: '',
-    state: '',
-    pincode: '',
+    fullName: user?.fullName || '',
+    email: user?.email || '',
+    phone: user?.phone || user?.addresses?.[0]?.phone || '',
+    address: user?.addresses?.[0]?.street || '',
+    city: user?.addresses?.[0]?.city || '',
+    state: user?.addresses?.[0]?.state || '',
+    pincode: user?.addresses?.[0]?.pincode || '',
     paymentMethod: 'razorpay' as 'razorpay' | 'upi' | 'card' | 'cod',
     upiId: '',
     cardNumber: '',
@@ -29,6 +33,22 @@ export const CheckoutPage: React.FC = () => {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      const defaultAddr = user.addresses?.find((a) => a.isDefault) || user.addresses?.[0];
+      setFormData((prev) => ({
+        ...prev,
+        fullName: prev.fullName || user.fullName || '',
+        email: prev.email || user.email || '',
+        phone: prev.phone || defaultAddr?.phone || user.phone || '',
+        address: prev.address || defaultAddr?.street || '',
+        city: prev.city || defaultAddr?.city || '',
+        state: prev.state || defaultAddr?.state || '',
+        pincode: prev.pincode || defaultAddr?.pincode || '',
+      }));
+    }
+  }, [user]);
 
   if (cart.length === 0) {
     return (
@@ -124,6 +144,28 @@ export const CheckoutPage: React.FC = () => {
         console.warn('Note: Order saved locally. Supabase insert response:', res.error);
       }
 
+      const pmStr =
+        formData.paymentMethod === 'cod'
+          ? 'COD'
+          : `RAZORPAY (${paymentDetails?.paymentId || 'ONLINE'})`;
+
+      recordNewOrder({
+        id: `ord_${Date.now()}`,
+        orderId,
+        customerName: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        address: fullAddress,
+        items: cart,
+        totalAmount: finalTotal,
+        paymentMethod: pmStr,
+        paymentStatus: formData.paymentMethod === 'cod' ? 'Pending' : 'Paid',
+        status: 'Processing',
+        courierPartner: 'Blue Dart Express',
+        trackingNumber: `BD${Math.floor(100000000 + Math.random() * 900000000)}IN`,
+        createdAt: new Date().toISOString(),
+      });
+
       localStorage.setItem('daily_walk_last_order', JSON.stringify(orderData));
       clearCart();
       setIsSubmitting(false);
@@ -184,12 +226,39 @@ export const CheckoutPage: React.FC = () => {
             <div className="lg:col-span-2 space-y-6">
               {/* Shipping Address Box */}
               <div className="bg-white p-6 rounded-3xl border border-[#E5E5E5] shadow-xs space-y-4">
-                <div className="flex items-center gap-2 pb-3 border-b border-[#E5E5E5]">
-                  <Truck className="w-5 h-5 text-[#E53935]" />
-                  <h3 className="text-base font-extrabold text-[#111111]">
-                    1. Shipping & Delivery Address
-                  </h3>
+                <div className="flex items-center justify-between pb-3 border-b border-[#E5E5E5]">
+                  <div className="flex items-center gap-2">
+                    <Truck className="w-5 h-5 text-[#E53935]" />
+                    <h3 className="text-base font-extrabold text-[#111111]">
+                      1. Shipping & Delivery Address
+                    </h3>
+                  </div>
+                  {user ? (
+                    <span className="text-[10px] font-black text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 flex items-center gap-1">
+                      <UserCheck className="w-3.5 h-3.5" />
+                      <span>Saved Profile</span>
+                    </span>
+                  ) : (
+                    <Link
+                      to="/login?redirect=/checkout"
+                      className="text-[11px] font-extrabold text-[#E53935] hover:underline flex items-center gap-1"
+                    >
+                      <LogIn className="w-3.5 h-3.5" />
+                      <span>Sign In for 1-Click</span>
+                    </Link>
+                  )}
                 </div>
+
+                {user && (
+                  <div className="p-3 bg-gray-50 rounded-xl border border-gray-200 text-xs text-gray-700 flex items-center justify-between">
+                    <p className="font-medium">
+                      Delivering to <strong className="font-bold text-[#111111]">{user.fullName}</strong> (<span className="text-gray-500">{user.email}</span>)
+                    </p>
+                    <Link to="/account" className="text-[11px] font-bold text-[#E53935] hover:underline shrink-0 ml-2">
+                      Manage Addresses
+                    </Link>
+                  </div>
+                )}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>

@@ -1,48 +1,56 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Flame } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 export const PromotionalBanner: React.FC = () => {
   return (
-    <section className="py-12 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative rounded-3xl overflow-hidden bg-[#111111] text-white p-8 sm:p-12 lg:p-16 border border-gray-800 shadow-2xl">
-          {/* Background image overlay */}
-          <div className="absolute inset-0 z-0 opacity-40">
-            <img
-              src="https://images.unsplash.com/photo-1515955656352-a1fa3ffcd111?auto=format&fit=crop&w=1600&q=80"
-              alt="Performance Footwear Lifestyle"
-              className="w-full h-full object-cover object-center"
-            />
-          </div>
+    <section className="py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto bg-[#0B0B0B] text-white rounded-3xl p-8 sm:p-12 lg:p-16 relative overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+          {/* Left Text Content */}
+          <div className="lg:col-span-6 space-y-3 sm:space-y-4">
+            <span className="text-[11px] sm:text-xs font-bold tracking-widest uppercase text-gray-400">
+              LIMITED TIME ONLY
+            </span>
 
-          {/* Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#111111] via-[#111111]/80 to-transparent z-10" />
-
-          {/* Content */}
-          <div className="relative z-20 max-w-xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-[#E53935] text-white text-xs font-extrabold uppercase tracking-widest">
-              <Flame className="w-3.5 h-3.5" />
-              PERFORMANCE INNOVATION
-            </div>
-
-            <h2 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
-              Move More. <br />
-              <span className="text-[#E53935]">Feel Better.</span>
+            <h2 className="font-heading font-black text-4xl sm:text-5xl lg:text-6xl text-white tracking-tight leading-tight">
+              Summer Sale
             </h2>
 
-            <p className="text-sm sm:text-base text-gray-300 font-medium leading-relaxed">
-              Explore our latest performance footwear collection. Designed for shock absorption, heel lock, and high energy return so you can conquer your workout or daily commute effortlessly.
+            <p className="text-sm sm:text-base text-gray-300 font-normal">
+              Up to 40% off on selected items
             </p>
 
-            <div className="pt-2">
+            <div className="pt-4">
               <Link
-                to="/sports"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-[#E53935] hover:bg-red-700 text-white text-sm font-extrabold rounded-2xl shadow-xl transition-all duration-200 group"
+                to="/sale"
+                className="px-8 py-3.5 bg-white text-black hover:bg-gray-100 text-sm font-bold rounded-full transition-all duration-200 inline-flex items-center gap-2 shadow-sm group"
               >
-                <span>Shop Sports Shoes</span>
+                <span>Shop the Sale</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
+            </div>
+          </div>
+
+          {/* Right Visual: Athletic Sneakers & 40% OFF Typography */}
+          <div className="lg:col-span-6 relative flex items-center justify-center lg:justify-end min-h-[220px] sm:min-h-[260px]">
+            {/* Sneaker Pair Image */}
+            <div className="relative z-10 w-full max-w-[380px] aspect-[4/3] flex items-center justify-center">
+              <img
+                src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80"
+                alt="Summer Sale Shoes"
+                className="max-h-full max-w-full object-contain -rotate-[15deg] drop-shadow-[0_20px_25px_rgba(0,0,0,0.5)]"
+              />
+            </div>
+
+            {/* Giant 40% OFF Typography matching reference */}
+            <div className="absolute right-0 sm:right-4 top-1/2 -translate-y-1/2 z-0 pointer-events-none select-none text-right">
+              <div className="font-heading font-black text-6xl sm:text-7xl lg:text-[110px] leading-none tracking-tighter text-white">
+                40%
+              </div>
+              <div className="font-heading font-black text-3xl sm:text-4xl lg:text-5xl leading-none tracking-tight text-white/90">
+                OFF
+              </div>
             </div>
           </div>
         </div>

@@ -1,8 +1,9 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { DailyWalkLogo } from './DailyWalkLogo';
-import { X, Heart, User, Home, Sparkles, ChevronRight } from 'lucide-react';
+import { X, Heart, User, Home, Sparkles, ChevronRight, LogOut, LogIn, ShieldCheck } from 'lucide-react';
 import { useWishlist } from '../../context/WishlistContext';
+import { useAuth } from '../../context/AuthContext';
 
 interface MobileNavDrawerProps {
   isOpen: boolean;
@@ -12,6 +13,7 @@ interface MobileNavDrawerProps {
 export const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ isOpen, onClose }) => {
   const location = useLocation();
   const { wishlistCount } = useWishlist();
+  const { user, signOut } = useAuth();
 
   if (!isOpen) return null;
 
@@ -30,7 +32,16 @@ export const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ isOpen, onClos
       icon: <Heart className="w-4 h-4 text-[#E53935]" />,
       badge: wishlistCount > 0 ? wishlistCount : undefined,
     },
-    { name: 'Account', path: '/account', icon: <User className="w-4 h-4" /> },
+    {
+      name: user ? 'My Account' : 'Sign In / Register',
+      path: user ? '/account' : '/login',
+      icon: user ? <User className="w-4 h-4 text-emerald-600" /> : <LogIn className="w-4 h-4 text-[#E53935]" />,
+    },
+    {
+      name: 'Admin Console',
+      path: '/admin',
+      icon: <ShieldCheck className="w-4 h-4 text-amber-600" />,
+    },
   ];
 
   return (
@@ -89,8 +100,35 @@ export const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({ isOpen, onClos
           })}
         </div>
 
-        {/* Bottom promo info */}
+        {/* Bottom user / promo info */}
         <div className="p-4 bg-[#F7F7F7] border-t border-[#E5E5E5] text-xs text-[#777777] space-y-2">
+          {user ? (
+            <div className="flex items-center justify-between pb-2 border-b border-gray-200">
+              <div className="truncate pr-2">
+                <span className="block font-black text-[#111111] truncate">{user.fullName}</span>
+                <span className="text-[11px] text-gray-500 truncate block">{user.email}</span>
+              </div>
+              <button
+                onClick={() => {
+                  signOut();
+                  onClose();
+                }}
+                className="px-2.5 py-1 bg-white hover:bg-red-50 text-red-600 rounded-lg border border-red-200 text-[11px] font-extrabold shrink-0"
+              >
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <div className="pb-2 border-b border-gray-200">
+              <Link
+                to="/login"
+                onClick={onClose}
+                className="w-full py-2 bg-[#111111] text-white text-xs font-black rounded-xl text-center block hover:bg-[#E53935] transition-colors"
+              >
+                Sign In / Join Daily Walk
+              </Link>
+            </div>
+          )}
           <p className="font-bold text-[#111111]">Daily Walk Footwear</p>
           <p>Step Into Your Everyday Style with 100% original shoes and easy 15-day returns.</p>
         </div>

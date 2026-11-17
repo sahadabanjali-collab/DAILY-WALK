@@ -124,3 +124,102 @@ export interface Order {
   status: 'Processing' | 'Shipped' | 'Delivered';
   estimatedDelivery: string;
 }
+
+export interface PromoCoupon {
+  code: string;
+  description: string;
+  discountType: 'percentage' | 'flat';
+  discountValue: number;
+  minOrderValue: number;
+  expiresAt: string;
+  isActive: boolean;
+  usageCount: number;
+}
+
+export interface CMSData {
+  announcement: {
+    text1: string;
+    text2: string;
+    link: string;
+    isActive: boolean;
+  };
+  hero: {
+    badge: string;
+    titleLine1: string;
+    titleHighlight: string;
+    subtitle: string;
+    primaryBtnText: string;
+    primaryBtnLink: string;
+    secondaryBtnText: string;
+    secondaryBtnLink: string;
+    imageUrl: string;
+  };
+  promoBanner: {
+    title: string;
+    subtitle: string;
+    discountText: string;
+    ctaText: string;
+    ctaLink: string;
+    imageUrl: string;
+    isActive: boolean;
+  };
+  storeSettings: {
+    freeShippingThreshold: number;
+    shippingFee: number;
+    returnPeriodDays: number;
+    supportPhone: string;
+    supportEmail: string;
+  };
+}
+
+export interface OrderRecord {
+  id: string;
+  orderId: string;
+  customerName: string;
+  email: string;
+  phone: string;
+  address: string;
+  items: any[];
+  totalAmount: number;
+  paymentMethod: string;
+  paymentStatus: 'Paid' | 'Pending' | 'Refunded';
+  status: 'Pending' | 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled';
+  courierPartner?: string;
+  trackingNumber?: string;
+  createdAt: string;
+  notes?: string;
+}
+
+export interface Customer {
+  id: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  city: string;
+  state: string;
+  ordersCount: number;
+  totalSpent: number;
+  memberTier: string;
+  joinedDate: string;
+  status: 'Active' | 'VIP' | 'Inactive';
+}
+
+export interface AuditLog {
+  id: string;
+  timestamp: string;
+  actor: string;
+  action: string;
+  category: 'product' | 'order' | 'cms' | 'customer' | 'system';
+  details: string;
+}
+
+export interface AdminUser {
+  id: string;
+  email: string;
+  fullName: string;
+  role: 'super_admin' | 'admin' | 'manager';
+  isActive: boolean;
+  lastLogin?: string;
+  createdAt: string;
+}
+

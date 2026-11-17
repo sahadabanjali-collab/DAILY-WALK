@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { MOCK_PRODUCTS } from '../data/products';
+import { useStoreData } from '../context/StoreDataContext';
 import { Product } from '../types';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -18,6 +18,7 @@ import { Heart, ShoppingBag, Zap, ShieldCheck, Truck, RotateCcw, Check, Sparkles
 export const ProductDetails: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const { products } = useStoreData();
 
   const [product, setProduct] = useState<Product | null>(null);
   const [selectedSize, setSelectedSize] = useState<number | null>(null);
@@ -33,8 +34,8 @@ export const ProductDetails: React.FC = () => {
 
   useEffect(() => {
     setLoading(true);
-    // Simulate realistic product lookup
-    const found = MOCK_PRODUCTS.find((p) => p.slug === slug || p.id === slug);
+    // Find product in catalog
+    const found = products.find((p) => p.slug === slug || p.id === slug);
     if (found) {
       setProduct(found);
       setSelectedSize(null);
@@ -44,7 +45,7 @@ export const ProductDetails: React.FC = () => {
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setLoading(false);
-  }, [slug]);
+  }, [slug, products]);
 
   if (loading) return <ProductDetailsSkeleton />;
 
@@ -88,9 +89,9 @@ export const ProductDetails: React.FC = () => {
     }
   };
 
-  const relatedProducts = MOCK_PRODUCTS.filter(
-    (p) => p.category === product.category && p.id !== product.id
-  ).slice(0, 4);
+  const relatedProducts = products
+    .filter((p) => p.category === product.category && p.id !== product.id)
+    .slice(0, 4);
 
   return (
     <div className="py-8 bg-[#F7F7F7]/30 min-h-screen">

@@ -29,9 +29,16 @@ export const CartItemRow: React.FC<CartItemRowProps> = ({
         className="relative w-16 h-16 sm:w-20 sm:h-20 bg-[#F7F7F7] rounded-xl flex-shrink-0 p-2 overflow-hidden flex items-center justify-center border border-[#E5E5E5]"
       >
         <img
-          src={product.images[0]}
+          src={product.images && product.images[0] ? product.images[0] : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=500&q=80'}
           alt={product.name}
           className="max-h-full max-w-full object-contain mix-blend-multiply"
+          onError={(e) => {
+            const target = e.currentTarget;
+            if (!target.dataset.failed) {
+              target.dataset.failed = 'true';
+              target.src = 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=500&q=80';
+            }
+          }}
         />
       </Link>
 

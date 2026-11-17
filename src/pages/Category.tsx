@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
-import { MOCK_PRODUCTS } from '../data/products';
+import { useStoreData } from '../context/StoreDataContext';
 import { CategorySlug, Gender, SortOption, FilterState } from '../types';
 import { ProductGrid } from '../components/product/ProductGrid';
 import { ProductFilters } from '../components/product/ProductFilters';
@@ -112,12 +112,13 @@ export const CategoryPage: React.FC = () => {
     });
   }, [path, config.filterCategory, config.filterGender]);
 
+  const { products } = useStoreData();
   const [sortOption, setSortOption] = useState<SortOption>('featured');
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
   // Filter products
   const categoryProducts = useMemo(() => {
-    let result = MOCK_PRODUCTS.filter((p) => {
+    let result = products.filter((p) => {
       if (config.isSaleOnly && !p.isSale) return false;
       if (config.filterGender && p.gender !== config.filterGender && p.gender !== 'Unisex') {
         return false;
@@ -162,7 +163,7 @@ export const CategoryPage: React.FC = () => {
     }
 
     return result;
-  }, [config, filters, sortOption]);
+  }, [config, filters, sortOption, products]);
 
   const handleClearAll = () => {
     setFilters({
